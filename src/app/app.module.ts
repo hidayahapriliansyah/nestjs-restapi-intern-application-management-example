@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import jwtConfig from '../config/jwt.config';
-import cookieConfig from '../config/cookie.config';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
+
+import cookieConfig from '../config/cookie.config';
+import domainUrlConfig from '../config/domain-url.config';
+import jwtConfig from '../config/jwt.config';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -11,6 +14,7 @@ import * as winston from 'winston';
       load: [
         jwtConfig,
         cookieConfig,
+        domainUrlConfig,
       ],
       cache: true,
       isGlobal: true,
@@ -25,6 +29,7 @@ import * as winston from 'winston';
       level: 'info',
       transports: [new winston.transports.Console()],
     }),
-  ]
+    AuthModule,
+  ],
 })
 export class AppModule { }

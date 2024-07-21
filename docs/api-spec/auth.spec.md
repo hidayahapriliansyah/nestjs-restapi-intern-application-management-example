@@ -14,12 +14,13 @@ Request body:
 
 Response:
 - Success
-  HTTP Status Code: 200 
+
+  HTTP Status Code: 200
   Response body (Success):
   ```json
   {
     "success": true,
-    "message": "Login successfully",
+    "message": "Login successfully.",
     "data": {
       "userId": "6920560e-e1d0-41b3-9e40-f5de89e635c0"
     }
