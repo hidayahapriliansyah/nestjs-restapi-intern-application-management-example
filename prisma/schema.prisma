@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id       String       @id @default(uuid()) @db.Uuid
+  name     String       @db.VarChar(100)
+  username String       @db.VarChar(100)
+  password String       @db.VarChar(255)
+  role     EmployeeRole @default(EMPLOYEE)
+
+  confirmed_intern_application_history ConfirmedInternApplicationHistory[]
+
+  @@unique([username])
+  @@map("employees")
+}
+
+enum EmployeeRole {
+  EMPLOYEE
+  RECRUITER
+}
+
+model InternApplication {
+  id              String                  @id @default(uuid()) @db.Uuid
+  created_at      DateTime                @default(now())
+  updated_at      DateTime                @updatedAt
+  name            String                  @db.VarChar(100)
+  choosen_field   String                  @db.VarChar(30)
+  date_of_birth   DateTime
+  university      String                  @db.VarChar(30)
+  intern_duration Int // in month [not null]
+  status          InternApplicationStatus @default(NEED_CONFIRMATION)
+  is_deleted      Boolean                 @default(false)
+
+  confirmed_intern_application_history ConfirmedInternApplicationHistory[]
+
+  @@map("intern_applications")
+}
+
+enum InternApplicationStatus {
+  NEED_CONFIRMATION
+  ACCEPTED
+  REJECTED
+}
+
+model ConfirmedInternApplicationHistory {
+  id                    String                        @id @default(uuid()) @db.Uuid
+  created_at            DateTime                      @default(now())
+  intern_application_id String                        @db.Uuid
+  employee_id           String                        @db.Uuid
+  status                InternApplicationConfirmation
+
+  employee           Employee          @relation(fields: [employee_id], references: [id])
+  intern_application InternApplication @relation(fields: [intern_application_id], references: [id])
+
+  @@map("confirmed_intern_application_histories")
+}
+
+enum InternApplicationConfirmation {
+  DELETED
+  ACCEPTED
+  REJECTED
+}
