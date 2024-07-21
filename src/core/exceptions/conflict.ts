@@ -5,8 +5,9 @@ import CustomAPIError from './parent-cusom-api-error';
 
 class Conflict extends CustomAPIError {
   statusCode = HttpStatus.CONFLICT;
-  constructor(message: string) {
-    super(message);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(message: string, errors: any) {
+    super(message, errors);
 
     this.name = 'ConflictError';
   }
