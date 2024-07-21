@@ -47,7 +47,7 @@ export class AuthController {
     res
       .status(200)
       .json(new SuccessAPIResponse('Login successfully.', {
-        id: dbEmployee.id,
+        userId: dbEmployee.id,
       }));
   }
 }

@@ -19,10 +19,10 @@ export class AuthService {
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) { }
 
-  throwUnauthenticatedError(data: unknown) {
+  handleUnauthenticatedAttempt(data: unknown) {
     this.logger
       .info('Failed to login. User access /api/auth with request body data: ', data);
-    throw new Unauthenticated('Unauthenticated user.');
+    throw new Unauthenticated('Unauthenticated user. Please login.', 'Unauthenticated user.');
   }
 
   async signinEmployee(
@@ -33,7 +33,7 @@ export class AuthService {
     try {
       this.validationService.validate(employeeSignInRequestSchema, data);
     } catch (error) {
-      this.throwUnauthenticatedError(data);
+      this.handleUnauthenticatedAttempt(data);
     }
 
     const dbEmployee = await this.prismaService.employee.findUnique({
@@ -43,12 +43,12 @@ export class AuthService {
     });
 
     if (!dbEmployee) {
-      this.throwUnauthenticatedError(data);
+      this.handleUnauthenticatedAttempt(data);
     }
 
     const isPasswordValid = await this.bcryptService.compare(data.password, dbEmployee.password);
     if (!isPasswordValid) {
-      throw new Unauthenticated('Unauthenticated user.');
+      this.handleUnauthenticatedAttempt(data);
     }
 
     return dbEmployee;

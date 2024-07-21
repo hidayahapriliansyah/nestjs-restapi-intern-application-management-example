@@ -15,7 +15,7 @@ export class JwtService {
     const jwtSecret = this.JWT_CONF.employeeJwtAccessTokenSecret;
 
     const token = jwt.sign(payload, jwtSecret, {
-      expiresIn: this.JWT_CONF.employeeJwtAccessTokenSecret,
+      expiresIn: this.JWT_CONF.jwtIdTokenExpiration,
     });
 
     return token;
@@ -24,8 +24,8 @@ export class JwtService {
   checkIsValid<T>(token: string, secret: string): T {
     try {
       return jwt.verify(token, secret) as T;
-    } catch (errror: unknown) {
-      throw new Unauthenticated('Unauthenticated user.');
+    } catch (error: unknown) {
+      throw new Unauthenticated('Unauthenticated user. Please login.', 'Unauthenticated user.');
     }
   }
 }
