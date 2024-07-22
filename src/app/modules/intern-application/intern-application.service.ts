@@ -153,9 +153,17 @@ export class InternApplicationService {
 
     const internApplication = await this.checkIsInternApplicationExist(applicationId);
 
-    await this.prismaService.internApplication.update({
+    const dbUpdatedApplication = await this.prismaService.internApplication.update({
       where: { id: internApplication.id },
       data: { is_deleted: true },
+    });
+
+    await this.prismaService.confirmedInternApplicationHistory.create({
+      data: {
+        status: 'DELETED',
+        employee_id: employee.id,
+        intern_application_id: dbUpdatedApplication.id,
+      },
     });
 
     return {
