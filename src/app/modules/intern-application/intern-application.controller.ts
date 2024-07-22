@@ -2,13 +2,10 @@ import {
   Controller,
   Get,
   Param,
-  ParseIntPipe,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { Employee } from '@prisma/client';
-import { Request } from 'express';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { RecruiterGuard } from '../../../core/guards/recruiter.role.guard';

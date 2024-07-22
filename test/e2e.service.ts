@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Employee } from '@prisma/client';
+import { Employee, InternApplication } from '@prisma/client';
 
 import { BcryptService } from '../src/common/bcrypt.service';
 import { PrismaService } from '../src/common/prisma.service';
@@ -75,5 +75,9 @@ export class E2EService {
     return await this.prismaService.employee.findFirst({
       where: { role: 'RECRUITER' },
     });
+  }
+
+  async getInternApplication(): Promise<InternApplication> {
+    return await this.prismaService.internApplication.findFirst();
   }
 }

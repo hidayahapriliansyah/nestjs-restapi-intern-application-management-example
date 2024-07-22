@@ -66,20 +66,30 @@ export class InternApplicationService {
   ): Promise<dto.GetApplicationInternDetailByIdResponse> {
     // eslint-disable-next-line max-len
     this.logger.info(`Employee with username: ${employee.username}, id: ${employee.id} access GET /api/applications/intern`);
+    try {
+      const dbInternApplication = await this.prismaService.internApplication.findUnique({
+        where: {
+          id: applicationId,
+        },
+      });
 
-    const dbInternApplication = await this.prismaService.internApplication.findUnique({
-      where: {
-        id: applicationId,
-      },
-    });
+      if (!dbInternApplication) {
+        throw new NotFound(
+          'Intern application is not found.',
+          `Intern application with id ${applicationId} is not found.`
+        );
+      }
 
-    if (!dbInternApplication) {
-      throw new NotFound(
-        'Intern application is not found.',
-        `Intern application with id ${applicationId} is not found.`
-      );
+      return dbInternApplication;
+    } catch (error) {
+      if ((error as Error).message.includes('Error creating UUID')) {
+        throw new NotFound(
+          'Intern application is not found.',
+          `Intern application with id ${applicationId} is not found.`
+        );
+      }
+      throw error as Error;
     }
 
-    return dbInternApplication;
   }
 }
