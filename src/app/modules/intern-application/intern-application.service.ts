@@ -129,6 +129,14 @@ export class InternApplicationService {
       data: { status: bodyReq.status },
     });
 
+    await this.prismaService.confirmedInternApplicationHistory.create({
+      data: {
+        status: bodyReq.status,
+        employee_id: employee.id,
+        intern_application_id: dbUpdatedApplication.id,
+      },
+    });
+
     return {
       applicationId: dbUpdatedApplication.id,
       name: dbUpdatedApplication.name,
