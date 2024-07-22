@@ -91,12 +91,27 @@ export class E2EService {
   }
 
   async getInternApplication(): Promise<InternApplication> {
-    return await this.prismaService.internApplication.findFirst();
+    return await this.prismaService.internApplication.findFirst({
+      where: {
+        is_deleted: false,
+      },
+    });
   }
 
   async getAcceptedInternApplication(): Promise<InternApplication> {
     return await this.prismaService.internApplication.findFirst({
-      where: { status: 'ACCEPTED' },
+      where: { status: 'ACCEPTED', is_deleted: false },
     });
+  }
+
+  async getInternApplicationById(id: string): Promise<InternApplication | null> {
+    try {
+      const dbInternApplication = await this.prismaService.internApplication.findUnique({
+        where: { id, is_deleted: false },
+      });
+      return dbInternApplication;
+    } catch (error) {
+      return null;
+    }
   }
 }
