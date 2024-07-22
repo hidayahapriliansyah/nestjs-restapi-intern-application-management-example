@@ -18,7 +18,7 @@ Responses:
     ```json
     {
       "success": true,
-      "message": "Success to get intern applications",
+      "message": "Success to get intern applications.",
       "data": {
         "applications": [
           {

@@ -10,6 +10,7 @@ import domainUrlConfig from '../config/domain-url.config';
 import jwtConfig from '../config/jwt.config';
 import { ErrorFilter } from '../core/filters/exception.filter';
 import { AuthModule } from './modules/auth/auth.module';
+import { InternApplicationModule } from './modules/intern-application/intern-application.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     CommonModule,
     AuthModule,
+    InternApplicationModule,
   ],
   providers: [
     {
