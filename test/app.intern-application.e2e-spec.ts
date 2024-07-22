@@ -261,6 +261,7 @@ describe('InternController (e2e)', () => {
     });
 
     afterEach(async () => {
+      await e2eService.deleteAllConfirmationInternApplicationHistory();
       await e2eService.deleteAllEmployee();
       await e2eService.deleteAllInternApplication();
     });
@@ -396,6 +397,12 @@ describe('InternController (e2e)', () => {
           status: 'ACCEPTED',
         });
 
+      const confirmationHistory = await e2eService.getConfirmationInternApplicationHistory();
+
+      expect(confirmationHistory.employee_id).toBe(employee.id);
+      expect(confirmationHistory.intern_application_id).toBe(internApplication.id);
+      expect(confirmationHistory.status).toBe('ACCEPTED');
+
       console.log('response.body =>', response.body);
 
       expect(response.status).toBe(200);
@@ -418,6 +425,12 @@ describe('InternController (e2e)', () => {
         .send({
           status: 'REJECTED',
         });
+
+      const confirmationHistory = await e2eService.getConfirmationInternApplicationHistory();
+
+      expect(confirmationHistory.employee_id).toBe(employee.id);
+      expect(confirmationHistory.intern_application_id).toBe(internApplication.id);
+      expect(confirmationHistory.status).toBe('REJECTED');
 
       console.log('response.body =>', response.body);
 

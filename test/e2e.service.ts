@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Employee, InternApplication } from '@prisma/client';
+import { ConfirmedInternApplicationHistory, Employee, InternApplication } from '@prisma/client';
 
 import { BcryptService } from '../src/common/bcrypt.service';
 import { PrismaService } from '../src/common/prisma.service';
@@ -113,5 +113,13 @@ export class E2EService {
     } catch (error) {
       return null;
     }
+  }
+
+  async getConfirmationInternApplicationHistory(): Promise<ConfirmedInternApplicationHistory> {
+    return await this.prismaService.confirmedInternApplicationHistory.findFirst();
+  }
+
+  async deleteAllConfirmationInternApplicationHistory() {
+    return await this.prismaService.confirmedInternApplicationHistory.deleteMany();
   }
 }
