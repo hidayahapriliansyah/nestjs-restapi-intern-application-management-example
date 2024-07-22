@@ -82,7 +82,7 @@ Response
     - Not Found Error
     - Internal Server Error
 
-## Accept Intern Application
+## Confirm Intern Application
 
 Endpoint: PATCH /api/applications/intern/:applicationId
 
@@ -105,44 +105,7 @@ Responses:
   ```json
   {
     "success": true,
-    "message": "Success to accept intern application",
-    "data": {
-      "applicationId": "a491263c-a3b2-4be6-a9d2-8081addaa0c6",
-      "name": "Adi Muhamad Firmansyah",
-      "status": "ACCEPTED",
-    }
-  }
-  ```
-- Failed
-  - Auth Error
-  - Not Found Error
-  - Validation Error
-  - Internal Server Error
-
-## Reject Intern Application
-
-Endpoint: PATCH /api/applications/intern/:applicationId
-
-Cookie:
-  - itscookiename=jwttoken
-
-Path parameters:
-  - applicationId: string, intern application id
-
-Request body:
-```json
-  {
-    "status": "REJECTED" // valid status request: ACCEPTED, REJECTED
-  }
-```
-
-Responses:
-- Success
-  HTTP Status Code: 200
-  ```json
-  {
-    "success": true,
-    "message": "Success to reject intern application",
+    "message": "Success to confirm intern application.",
     "data": {
       "applicationId": "a491263c-a3b2-4be6-a9d2-8081addaa0c6",
       "name": "Adi Muhamad Firmansyah",

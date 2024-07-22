@@ -1,7 +1,9 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -47,11 +49,19 @@ export class InternApplicationController {
     return new SuccessAPIResponse('Success to get intern application detail.', result);
   }
 
-  // @Patch('/:applicationId')
-  // async ConfirmApplicationInternDetailById(
-  //   @Param('applicationId') applicationId: string,
-  //   @Body() body: dto.ConfirmApplicationInternByIdRequest,
-  // ): Promise<SuccessAPIResponse<dto.ConfirmApplicationInternResponse>> { }
+  @Patch('/:applicationId')
+  async confirmApplicationInternDetailById(
+    @Auth() employee: Employee,
+    @Param('applicationId') applicationId: string,
+    @Body() body: dto.ConfirmApplicationInternByIdRequest,
+  ): Promise<SuccessAPIResponse<dto.ConfirmApplicationInternResponse>> {
+    const result = await this.internApplicationService.confirmApplicationInternDetailById(
+      employee,
+      applicationId,
+      body,
+    );
+    return new SuccessAPIResponse('Success to confirm intern application.', result);
+  }
 
   // @Delete('/:applicationId')
   // async DeleteApplicationInternDetailById(
