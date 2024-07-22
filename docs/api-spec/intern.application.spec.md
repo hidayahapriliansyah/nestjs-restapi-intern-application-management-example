@@ -63,7 +63,7 @@ Response
     ```json
     {
       "success": true,
-      "message": "Success to get intern application detail",
+      "message": "Success to get intern application detail.",
       "data" {
         "id": "a491263c-a3b2-4be6-a9d2-8081addaa0c6",
         "created_at": "2024-07-21 06:40:38.617Z",

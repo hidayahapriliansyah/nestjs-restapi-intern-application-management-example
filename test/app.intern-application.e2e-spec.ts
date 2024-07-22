@@ -1,9 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import * as request from 'supertest';
-import { Logger } from 'winston';
 
 import { AppModule } from '../src/app/app.module';
 import { JwtService } from '../src/common/jwt.service';
@@ -14,7 +12,6 @@ import { E2EService } from './e2e.service';
 describe('InternController (e2e)', () => {
   let app: INestApplication;
   let e2eService: E2EService;
-  let logger: Logger;
   let jwtService: JwtService;
   let configService: ConfigService;
   let cookieName: string;
@@ -27,7 +24,6 @@ describe('InternController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    logger = app.get(WINSTON_MODULE_PROVIDER);
     e2eService = app.get(E2EService);
     jwtService = app.get(JwtService);
     configService = app.get(ConfigService);

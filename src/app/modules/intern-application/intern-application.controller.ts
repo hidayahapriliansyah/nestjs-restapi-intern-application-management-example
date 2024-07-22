@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Param,
   ParseIntPipe,
   Query,
   Req,
@@ -37,10 +38,17 @@ export class InternApplicationController {
     return new SuccessAPIResponse('Success to get intern applications.', result);
   }
 
-  // @Get('/:applicationId')
-  // async getApplicationInternDetailById(
-  //   @Param('applicationId') applicationId: string,
-  // ): Promise<SuccessAPIResponse<dto.ConfirmApplicationInternResponse>> { }
+  @Get('/:applicationId')
+  async getApplicationInternDetailById(
+    @Auth() employee: Employee,
+    @Param('applicationId') applicationId: string,
+  ): Promise<SuccessAPIResponse<dto.GetApplicationInternDetailByIdResponse>> {
+    const result = await this.internApplicationService.getApplicationInternDetailById(
+      employee,
+      applicationId,
+    );
+    return new SuccessAPIResponse('Success to get intern application detail.', result);
+  }
 
   // @Patch('/:applicationId')
   // async ConfirmApplicationInternDetailById(

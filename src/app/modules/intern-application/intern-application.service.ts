@@ -5,6 +5,7 @@ import { Logger } from 'winston';
 
 import { PrismaService } from '../../../common/prisma.service';
 import { ValidationService } from '../../../common/validation.service';
+import NotFound from '../../../core/exceptions/not-found';
 import * as dto from './intern-application.dto';
 import { getApplicationsInternRequestQuerySchema } from './intern-application.validation';
 
@@ -32,15 +33,11 @@ export class InternApplicationService {
 
     const filter: Prisma.InternApplicationWhereInput[] = [];
 
-    console.warn('name =>', name);
-
     if (name && name !== '') {
       filter.push({
         OR: [{ name: { contains: name, mode: 'insensitive' } }],
       });
     }
-
-    console.warn('filter =>', filter);
 
     const dbInternApplications = await this.prismaService.internApplication.findMany({
       where: { AND: filter },
@@ -61,5 +58,28 @@ export class InternApplicationService {
         total_page: Math.ceil(totalData / query.limit),
       },
     };
+  }
+
+  async getApplicationInternDetailById(
+    employee: Employee,
+    applicationId: string
+  ): Promise<dto.GetApplicationInternDetailByIdResponse> {
+    // eslint-disable-next-line max-len
+    this.logger.info(`Employee with username: ${employee.username}, id: ${employee.id} access GET /api/applications/intern`);
+
+    const dbInternApplication = await this.prismaService.internApplication.findUnique({
+      where: {
+        id: applicationId,
+      },
+    });
+
+    if (!dbInternApplication) {
+      throw new NotFound(
+        'Intern application is not found.',
+        `Intern application with id ${applicationId} is not found.`
+      );
+    }
+
+    return dbInternApplication;
   }
 }
