@@ -1,5 +1,6 @@
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpStatus,
@@ -27,6 +28,13 @@ export class ErrorFilter implements ExceptionFilter {
         .status(HttpStatus.BAD_REQUEST)
         .json(
           new ErrorAPIResponse(exception.message, exception.errors)
+        );
+      return;
+    } else if (exception instanceof BadRequestException) {
+      response
+        .status(HttpStatus.BAD_REQUEST)
+        .json(
+          new ErrorAPIResponse('Validation Error.', exception.message)
         );
       return;
     } else {

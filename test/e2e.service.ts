@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Employee } from '@prisma/client';
 
 import { BcryptService } from '../src/common/bcrypt.service';
 import { PrismaService } from '../src/common/prisma.service';
@@ -13,7 +14,7 @@ export class E2EService {
   async createEmployeeWithRoleEmployee() {
     await this.prismaService.employee.create({
       data: {
-        name: 'Adi Muhamad Firmansyah',
+        name: 'Employee',
         password: await this.bcyptService.hash('password'),
         username: 'employee',
         role: 'EMPLOYEE',
@@ -24,7 +25,7 @@ export class E2EService {
   async createEmployeeWithRoleRecruiter() {
     await this.prismaService.employee.create({
       data: {
-        name: 'Adi Hidayah Apriliansyah',
+        name: 'Recruiter',
         password: await this.bcyptService.hash('password'),
         username: 'recruiter',
         role: 'RECRUITER',
@@ -33,6 +34,46 @@ export class E2EService {
   }
 
   async deleteAllEmployee() {
-    await this.prismaService.employee.deleteMany();
+    await this.prismaService.employee.deleteMany({});
+  }
+
+  async createInterApplicationFirmansyah() {
+    await this.prismaService.internApplication.create({
+      data: {
+        choosen_field: 'Backend Engineer',
+        date_of_birth: new Date('2001-04-25'),
+        intern_duration: 3,
+        name: 'Adi Muhamad Firmansyah',
+        university: 'STMIK DCI',
+      },
+    });
+  }
+
+  async createInterApplicationHidayah() {
+    await this.prismaService.internApplication.create({
+      data: {
+        choosen_field: 'Backend Engineer',
+        date_of_birth: new Date('2001-04-25'),
+        intern_duration: 3,
+        name: 'Adi Hidayah Apriliansyah',
+        university: 'STMIK DCI',
+      },
+    });
+  }
+
+  async deleteAllInternApplication() {
+    await this.prismaService.internApplication.deleteMany({});
+  }
+
+  async getEmployeeWithRoleEmployee(): Promise<Employee> {
+    return await this.prismaService.employee.findFirst({
+      where: { role: 'EMPLOYEE' },
+    });
+  }
+
+  async getEmployeeWithRoleRecruiter(): Promise<Employee> {
+    return await this.prismaService.employee.findFirst({
+      where: { role: 'RECRUITER' },
+    });
   }
 }

@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 
@@ -9,7 +10,11 @@ import cookieConfig from '../config/cookie.config';
 import domainUrlConfig from '../config/domain-url.config';
 import jwtConfig from '../config/jwt.config';
 import { ErrorFilter } from '../core/filters/exception.filter';
+import { EmployeeAuthMiddleware } from '../core/middlewares/employee.auth.middleware';
 import { AuthModule } from './modules/auth/auth.module';
+import {
+  InternApplicationController,
+} from './modules/intern-application/intern-application.controller';
 import { InternApplicationModule } from './modules/intern-application/intern-application.module';
 
 @Module({
@@ -44,4 +49,9 @@ import { InternApplicationModule } from './modules/intern-application/intern-app
     },
   ],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(cookieParser()).forRoutes('*');
+    consumer.apply(EmployeeAuthMiddleware).forRoutes(InternApplicationController);
+  }
+}

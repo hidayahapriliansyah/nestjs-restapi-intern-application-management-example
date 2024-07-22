@@ -20,7 +20,15 @@ export class EmployeeAuthMiddleware implements NestMiddleware {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async use(req: Request & { user: any }, res: Response, next: NextFunction) {
-    const accessToken = req.cookies[this.COOKIE_CONF.employeeAccessTokenCookieName];
+    const { cookies } = req;
+
+    if (!cookies) {
+      throw new Unauthenticated('Unauthenticated user. Please login.', 'Unauthenticated user.');
+    }
+
+    const cookieName = this.COOKIE_CONF.employeeAccessTokenCookieName;
+    const accessToken = cookies[cookieName];
+
     if (!accessToken) {
       throw new Unauthenticated('Unauthenticated user. Please login.', 'Unauthenticated user.');
     }

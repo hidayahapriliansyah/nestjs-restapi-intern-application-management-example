@@ -32,11 +32,15 @@ export class InternApplicationService {
 
     const filter: Prisma.InternApplicationWhereInput[] = [];
 
+    console.warn('name =>', name);
+
     if (name && name !== '') {
       filter.push({
-        OR: [{ name }],
+        OR: [{ name: { contains: name, mode: 'insensitive' } }],
       });
     }
+
+    console.warn('filter =>', filter);
 
     const dbInternApplications = await this.prismaService.internApplication.findMany({
       where: { AND: filter },
