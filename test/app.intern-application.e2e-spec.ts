@@ -252,4 +252,181 @@ describe('InternController (e2e)', () => {
       expect(response.body.data.status).toBeDefined();
     });
   });
+
+  describe('PATCH /api/applications/intern/:applicationId', () => {
+    beforeEach(async () => {
+      await e2eService.createEmployeeWithRoleEmployee();
+      await e2eService.createEmployeeWithRoleRecruiter();
+      await e2eService.createInterApplicationFirmansyah();
+    });
+
+    afterEach(async () => {
+      await e2eService.deleteAllEmployee();
+      await e2eService.deleteAllInternApplication();
+    });
+
+    it('should response unauthenticated if user have no access token cookie', async () => {
+      const internApplication = await e2eService.getInternApplication();
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/applications/intern/${internApplication.id}`)
+        .send({
+          status: 'ACCEPTED',
+        });
+
+      console.log('response.body =>', response.body);
+
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBe('Unauthenticated user. Please login.');
+      expect(response.body.errors).toBeDefined();
+    });
+
+    // eslint-disable-next-line max-len
+    it('should response unauthenticated if user have access token cookie with invalid value', async () => {
+      const internApplication = await e2eService.getInternApplication();
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/applications/intern/${internApplication.id}`)
+        .set('Cookie', 'itscookiname=wrong')
+        .send({
+          status: 'ACCEPTED',
+        });
+
+      console.log('response.body =>', response.body);
+
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBe('Unauthenticated user. Please login.');
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it('should unauthorized if employee is not recruiter', async () => {
+      const internApplication = await e2eService.getInternApplication();
+
+      const employee = await e2eService.getEmployeeWithRoleEmployee();
+      const token = jwtService.create<PayloadDataEmployeeAccessToken>({ id: employee.id });
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/applications/intern/${internApplication.id}`)
+        .set('Cookie', `${cookieName}=${token}`)
+        .send({
+          status: 'ACCEPTED',
+        });
+
+      console.log('response.body =>', response.body);
+
+      expect(response.status).toBe(403);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBe('Forbidden to access resource.');
+      expect(response.body.errors).toBe('User is not recruiter');
+    });
+
+    it('should response not found error if application id is not found', async () => {
+      const employee = await e2eService.getEmployeeWithRoleRecruiter();
+      const token = jwtService.create<PayloadDataEmployeeAccessToken>({ id: employee.id });
+
+      const response = await request(app.getHttpServer())
+        .patch('/api/applications/intern/wrong-id')
+        .set('Cookie', `${cookieName}=${token}`)
+        .send({
+          status: 'ACCEPTED',
+        });
+
+      console.log('response.body =>', response.body);
+
+      expect(response.status).toBe(404);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBe('Intern application is not found.');
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it('should response validation error if body request not valid', async () => {
+      const internApplication = await e2eService.getInternApplication();
+
+      const employee = await e2eService.getEmployeeWithRoleRecruiter();
+      const token = jwtService.create<PayloadDataEmployeeAccessToken>({ id: employee.id });
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/applications/intern/${internApplication.id}`)
+        .set('Cookie', `${cookieName}=${token}`)
+        .send({
+          status: 'wrong',
+        });
+
+      console.log('response.body =>', response.body);
+
+      expect(response.status).toBe(400);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBeDefined();
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it('should response bad request error if application already confirmed', async () => {
+      const acceptedApplication = await e2eService.createAcceptedInterApplicationHidayah();
+
+      const employee = await e2eService.getEmployeeWithRoleRecruiter();
+      const token = jwtService.create<PayloadDataEmployeeAccessToken>({ id: employee.id });
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/applications/intern/${acceptedApplication.id}`)
+        .set('Cookie', `${cookieName}=${token}`)
+        .send({
+          status: 'REJECTED',
+        });
+
+      console.log('response.body =>', response.body);
+
+      expect(response.status).toBe(400);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBe('Application already confirmed.');
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it('should response success with accepted status', async () => {
+      const internApplication = await e2eService.getInternApplication();
+
+      const employee = await e2eService.getEmployeeWithRoleRecruiter();
+      const token = jwtService.create<PayloadDataEmployeeAccessToken>({ id: employee.id });
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/applications/intern/${internApplication.id}`)
+        .set('Cookie', `${cookieName}=${token}`)
+        .send({
+          status: 'ACCEPTED',
+        });
+
+      console.log('response.body =>', response.body);
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.message).toBe('Success to confirm intern application.');
+      expect(response.body.data.applicationId).toBeDefined();
+      expect(response.body.data.name).toBeDefined();
+      expect(response.body.data.status).toBe('ACCEPTED');
+    });
+
+    it('should response success with rejected status', async () => {
+      const internApplication = await e2eService.getInternApplication();
+
+      const employee = await e2eService.getEmployeeWithRoleRecruiter();
+      const token = jwtService.create<PayloadDataEmployeeAccessToken>({ id: employee.id });
+
+      const response = await request(app.getHttpServer())
+        .patch(`/api/applications/intern/${internApplication.id}`)
+        .set('Cookie', `${cookieName}=${token}`)
+        .send({
+          status: 'REJECTED',
+        });
+
+      console.log('response.body =>', response.body);
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.message).toBe('Success to confirm intern application.');
+      expect(response.body.data.applicationId).toBeDefined();
+      expect(response.body.data.name).toBeDefined();
+      expect(response.body.data.status).toBe('REJECTED');
+    });
+  });
 });

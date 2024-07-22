@@ -61,6 +61,19 @@ export class E2EService {
     });
   }
 
+  async createAcceptedInterApplicationHidayah(): Promise<InternApplication> {
+    return await this.prismaService.internApplication.create({
+      data: {
+        choosen_field: 'Backend Engineer',
+        date_of_birth: new Date('2001-04-25'),
+        intern_duration: 3,
+        name: 'Adi Hidayah Apriliansyah',
+        university: 'STMIK DCI',
+        status: 'ACCEPTED',
+      },
+    });
+  }
+
   async deleteAllInternApplication() {
     await this.prismaService.internApplication.deleteMany({});
   }
@@ -79,5 +92,11 @@ export class E2EService {
 
   async getInternApplication(): Promise<InternApplication> {
     return await this.prismaService.internApplication.findFirst();
+  }
+
+  async getAcceptedInternApplication(): Promise<InternApplication> {
+    return await this.prismaService.internApplication.findFirst({
+      where: { status: 'ACCEPTED' },
+    });
   }
 }

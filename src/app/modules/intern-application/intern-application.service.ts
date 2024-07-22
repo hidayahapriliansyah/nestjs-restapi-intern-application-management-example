@@ -119,7 +119,8 @@ export class InternApplicationService {
     if (internApplication.status !== 'NEED_CONFIRMATION') {
       throw new BadRequest(
         'Application already confirmed.',
-        `Application with id: ${applicationId} already confirmed with status`
+        // eslint-disable-next-line max-len
+        `Application with id: ${applicationId} already confirmed with status ${internApplication.status}`
       );
     }
 
