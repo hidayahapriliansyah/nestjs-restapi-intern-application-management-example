@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -63,8 +64,15 @@ export class InternApplicationController {
     return new SuccessAPIResponse('Success to confirm intern application.', result);
   }
 
-  // @Delete('/:applicationId')
-  // async DeleteApplicationInternDetailById(
-  //   @Param('applicationId') applicationId: string
-  // ): Promise<SuccessAPIResponse<dto.DeleteApplicationInternResponse>> {}
+  @Delete('/:applicationId')
+  async deleteApplicationInternDetailById(
+    @Auth() employee: Employee,
+    @Param('applicationId') applicationId: string
+  ): Promise<SuccessAPIResponse<dto.DeleteApplicationInternResponse>> {
+    const result = await this.internApplicationService.deleteApplicationInternDetailById(
+      employee,
+      applicationId,
+    );
+    return new SuccessAPIResponse('Success to delete intern application.', result);
+  }
 }

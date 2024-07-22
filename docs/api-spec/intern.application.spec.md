@@ -135,7 +135,7 @@ Responses:
   ```json
   {
     "success": true,
-    "message": "Success to delete intern application",
+    "message": "Success to delete intern application.",
     "data": {
       "applicationId": "a491263c-a3b2-4be6-a9d2-8081addaa0c6"
     }

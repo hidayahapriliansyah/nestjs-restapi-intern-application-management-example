@@ -135,4 +135,23 @@ export class InternApplicationService {
       status: dbUpdatedApplication.status,
     };
   }
+
+  async deleteApplicationInternDetailById(
+    employee: Employee,
+    applicationId: string,
+  ): Promise<dto.DeleteApplicationInternResponse> {
+    // eslint-disable-next-line max-len
+    this.logger.info(`Employee with username: ${employee.username}, id: ${employee.id} access DELETE /api/applications/intern/:applicationId`);
+
+    const internApplication = await this.checkIsInternApplicationExist(applicationId);
+
+    await this.prismaService.internApplication.update({
+      where: { id: internApplication.id },
+      data: { is_deleted: true },
+    });
+
+    return {
+      applicationId: internApplication.id,
+    };
+  }
 }
