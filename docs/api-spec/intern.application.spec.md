@@ -14,7 +14,9 @@ Query params:
 
 Responses:
   - Success
+
     HTTP Status Code: 200
+
     ```json
     {
       "success": true,
@@ -59,7 +61,9 @@ Path parameters:
 
 Response
   - Success
+
     HTTP Status Code: 200
+
     ```json
     {
       "success": true,
@@ -131,7 +135,9 @@ Path parameters:
 
 Responses:
 - Success
+
   HTTP Status Code: 200
+
   ```json
   {
     "success": true,

@@ -16,6 +16,7 @@ Response:
 - Success
 
   HTTP Status Code: 200
+  
   Response body (Success):
   ```json
   {
@@ -27,8 +28,11 @@ Response:
   }
   ```
 - Failed
+
   HTTP Status Code: 401
+
   Response body (Success):
+
   ```json
   {
     "success": false,
