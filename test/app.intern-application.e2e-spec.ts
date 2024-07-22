@@ -451,6 +451,7 @@ describe('InternController (e2e)', () => {
     });
 
     afterEach(async () => {
+      await e2eService.deleteAllConfirmationInternApplicationHistory();
       await e2eService.deleteAllEmployee();
       await e2eService.deleteAllInternApplication();
     });
@@ -533,6 +534,12 @@ describe('InternController (e2e)', () => {
         .getInternApplicationById(internApplication.id);
 
       expect(internApplicationAfterDelete).toBeNull();
+
+      const confirmationHistory = await e2eService.getConfirmationInternApplicationHistory();
+
+      expect(confirmationHistory.employee_id).toBe(employee.id);
+      expect(confirmationHistory.intern_application_id).toBe(internApplication.id);
+      expect(confirmationHistory.status).toBe('DELETED');
 
       console.log('response.body =>', response.body);
 
