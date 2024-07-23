@@ -35,6 +35,8 @@ All of the API specifications for this project are written in the `docs` folder 
 
 ## 🚀 Running The Project
 
+Please pay attention to .env.example file and make your own .env file base on your local environment.
+
 ### Install the dependencies
 ```bash
 $ npm install
