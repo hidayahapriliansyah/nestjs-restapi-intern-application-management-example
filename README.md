@@ -40,6 +40,11 @@ All of the API specifications for this project are written in the `docs` folder 
 $ npm install
 ```
 
+### Excecute Prisma migration
+```bash
+$ npx prisma migrate dev
+```
+
 ### Running end-to-end testing
 ```bash
 $ npm run test:e2e
