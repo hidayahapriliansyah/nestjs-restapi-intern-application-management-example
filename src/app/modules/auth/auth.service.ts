@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Employee } from '@prisma/client';
+import { InjectRepository } from '@nestjs/typeorm';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Repository } from 'typeorm';
 import { Logger } from 'winston';
 
+import { Employee } from '../../../../database/entities/employee.entity';
 import { BcryptService } from '../../../common/bcrypt.service';
-import { PrismaService } from '../../../common/prisma.service';
 import { ValidationService } from '../../../common/validation.service';
 import Unauthenticated from '../../../core/exceptions/unauthenticated';
 import * as dto from './auth.dto';
@@ -13,7 +14,8 @@ import { employeeSignInRequestSchema } from './auth.validation';
 @Injectable()
 export class AuthService {
   constructor(
-    private prismaService: PrismaService,
+    @InjectRepository(Employee)
+    private employeeRepository: Repository<Employee>,
     private validationService: ValidationService,
     private bcryptService: BcryptService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
@@ -36,17 +38,18 @@ export class AuthService {
       this.handleUnauthenticatedAttempt(data);
     }
 
-    const dbEmployee = await this.prismaService.employee.findUnique({
-      where: {
-        username: data.username,
-      },
+    const dbEmployee = await this.employeeRepository.findOne({
+      where: { username: data.username },
     });
 
     if (!dbEmployee) {
       this.handleUnauthenticatedAttempt(data);
     }
 
-    const isPasswordValid = await this.bcryptService.compare(data.password, dbEmployee.password);
+    const isPasswordValid = await this.bcryptService.compare(
+      data.password,
+      dbEmployee.password,
+    );
     if (!isPasswordValid) {
       this.handleUnauthenticatedAttempt(data);
     }
