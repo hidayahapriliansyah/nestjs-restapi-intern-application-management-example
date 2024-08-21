@@ -1,10 +1,12 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as cookieParser from 'cookie-parser';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 
+import { dataSourceOptions } from '../../database/data-source';
 import { CommonModule } from '../common/common.module';
 import cookieConfig from '../config/cookie.config';
 import domainUrlConfig from '../config/domain-url.config';
@@ -38,6 +40,7 @@ import { InternApplicationModule } from './modules/intern-application/intern-app
       level: 'info',
       transports: [new winston.transports.Console()],
     }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     CommonModule,
     AuthModule,
     InternApplicationModule,
