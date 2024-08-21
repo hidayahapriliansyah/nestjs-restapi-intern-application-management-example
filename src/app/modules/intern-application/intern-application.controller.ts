@@ -8,8 +8,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { Employee } from '@prisma/client';
 
+import { Employee } from '../../../../database/entities/employee.entity';
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { RecruiterGuard } from '../../../core/guards/recruiter.role.guard';
 import { SuccessAPIResponse } from '../../../core/models/web.model';

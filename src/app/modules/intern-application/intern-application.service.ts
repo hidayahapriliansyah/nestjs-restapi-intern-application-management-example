@@ -1,9 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Employee, InternApplication, Prisma } from '@prisma/client';
+import { InjectRepository } from '@nestjs/typeorm';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Repository } from 'typeorm';
 import { Logger } from 'winston';
 
-import { PrismaService } from '../../../common/prisma.service';
+import {
+  ConfirmedInternApplicationHistory,
+  InternApplicationConfirmation,
+} from '../../../../database/entities/confirmed-intern-application-history.entity';
+import { Employee } from '../../../../database/entities/employee.entity';
+import {
+  InternApplication,
+  InternApplicationStatus,
+} from '../../../../database/entities/intern-application.entity';
 import { ValidationService } from '../../../common/validation.service';
 import BadRequest from '../../../core/exceptions/bad-request';
 import NotFound from '../../../core/exceptions/not-found';
@@ -16,42 +25,53 @@ import {
 @Injectable()
 export class InternApplicationService {
   constructor(
-    private prismaService: PrismaService,
+    @InjectRepository(InternApplication)
+    private internApplicationRepository: Repository<InternApplication>,
+    @InjectRepository(ConfirmedInternApplicationHistory)
+    private confirmedInternApplicationHistoryRepository: Repository<
+      ConfirmedInternApplicationHistory
+    >,
     private validationService: ValidationService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) { }
 
   async getApplicationsIntern(
     employee: Employee,
-    { name, limit = 10, page = 1 }: {
+    {
+      name,
+      limit = 10,
+      page = 1,
+    }: {
       name?: string;
       page?: number;
       limit?: number;
-    }
+    },
   ): Promise<dto.GetApplicationsInternResponse> {
     // eslint-disable-next-line max-len
-    this.logger.info(`Employee with username: ${employee.username}, id: ${employee.id} access GET /api/applications/intern`);
+    this.logger.info(
+      // eslint-disable-next-line max-len
+      `Employee with username: ${employee.username}, id: ${employee.id} access GET /api/applications/intern`,
+    );
 
-    const query = this.validationService
-      .validate(getApplicationsInternRequestQuerySchema, { name, limit, page });
+    const query = this.validationService.validate(
+      getApplicationsInternRequestQuerySchema,
+      { name, limit, page },
+    );
 
-    const filter: Prisma.InternApplicationWhereInput[] = [];
+    const queryBuilder = this.internApplicationRepository
+      .createQueryBuilder('internApplication')
+      .where('internApplication.is_deleted = :isDeleted', { isDeleted: false });
 
     if (name && name !== '') {
-      filter.push({
-        OR: [{ name: { contains: name, mode: 'insensitive' } }],
+      queryBuilder.andWhere('internApplication.name ILIKE :name', {
+        name: `%${name}%`,
       });
     }
 
-    const dbInternApplications = await this.prismaService.internApplication.findMany({
-      where: { is_deleted: false, AND: filter },
-      take: limit,
-      skip: (query.page - 1) * query.limit,
-    });
+    queryBuilder.take(limit).skip((query.page - 1) * query.limit);
 
-    const totalData = await this.prismaService.internApplication.count({
-      where: { AND: filter },
-    });
+    const [dbInternApplications, totalData] =
+      await queryBuilder.getManyAndCount();
 
     return {
       applications: dbInternApplications,
@@ -65,41 +85,50 @@ export class InternApplicationService {
   }
 
   private async checkIsInternApplicationExist(
-    applicationId: string
+    applicationId: string,
   ): Promise<InternApplication> {
     try {
-      const dbInternApplication = await this.prismaService.internApplication.findUnique({
-        where: {
-          id: applicationId,
-          is_deleted: false,
-        },
-      });
+      const dbInternApplication =
+        await this.internApplicationRepository.findOne({
+          where: {
+            id: applicationId,
+            is_deleted: false,
+          },
+        });
 
       if (!dbInternApplication) {
         throw new NotFound(
           'Intern application is not found.',
-          `Intern application with id ${applicationId} is not found.`
+          `Intern application with id ${applicationId} is not found.`,
         );
       }
+
       return dbInternApplication;
     } catch (error) {
-      if ((error as Error).message.includes('Error creating UUID')) {
+      // Tangani kesalahan khusus jika ada
+      if (
+        (error as Error).message.includes('invalid input syntax for type uuid:')
+      ) {
         throw new NotFound(
           'Intern application is not found.',
-          `Intern application with id ${applicationId} is not found.`
+          `Intern application with id ${applicationId} is not found.`,
         );
       }
-      throw error as Error;
+      throw error;
     }
   }
 
   async getApplicationInternDetailById(
     employee: Employee,
-    applicationId: string
+    applicationId: string,
   ): Promise<dto.GetApplicationInternDetailByIdResponse> {
     // eslint-disable-next-line max-len
-    this.logger.info(`Employee with username: ${employee.username}, id: ${employee.id} access GET /api/applications/intern/:applicationId`);
-    const internApplication = await this.checkIsInternApplicationExist(applicationId);
+    this.logger.info(
+      // eslint-disable-next-line max-len
+      `Employee with username: ${employee.username}, id: ${employee.id} access GET /api/applications/intern/:applicationId`,
+    );
+    const internApplication =
+      await this.checkIsInternApplicationExist(applicationId);
     return internApplication;
   }
 
@@ -108,33 +137,37 @@ export class InternApplicationService {
     applicationId: string,
     body: dto.ConfirmApplicationInternByIdRequest,
   ): Promise<dto.ConfirmApplicationInternResponse> {
-    // eslint-disable-next-line max-len
-    this.logger.info(`Employee with username: ${employee.username}, id: ${employee.id} access PATCH /api/applications/intern/:applicationId`);
+    this.logger.info(
+      // eslint-disable-next-line max-len
+      `Employee with username: ${employee.username}, id: ${employee.id} accessed PATCH /api/applications/intern/:applicationId`,
+    );
 
-    const internApplication = await this.checkIsInternApplicationExist(applicationId);
+    const internApplication =
+      await this.checkIsInternApplicationExist(applicationId);
 
-    const bodyReq = this.validationService
-      .validate(confirmApplicationInternRequestBodySchema, body);
+    const bodyReq = this.validationService.validate(
+      confirmApplicationInternRequestBodySchema,
+      body,
+    );
 
     if (internApplication.status !== 'NEED_CONFIRMATION') {
       throw new BadRequest(
         'Application already confirmed.',
         // eslint-disable-next-line max-len
-        `Application with id: ${applicationId} already confirmed with status ${internApplication.status}`
+        `Application with id: ${applicationId} already confirmed with status ${internApplication.status}`,
       );
     }
 
-    const dbUpdatedApplication = await this.prismaService.internApplication.update({
-      where: { id: internApplication.id },
-      data: { status: bodyReq.status },
-    });
+    // Update application status
+    internApplication.status = bodyReq.status as InternApplicationStatus;
+    const dbUpdatedApplication =
+      await this.internApplicationRepository.save(internApplication);
 
-    await this.prismaService.confirmedInternApplicationHistory.create({
-      data: {
-        status: bodyReq.status,
-        employee_id: employee.id,
-        intern_application_id: dbUpdatedApplication.id,
-      },
+    // Create history record
+    await this.confirmedInternApplicationHistoryRepository.save({
+      status: bodyReq.status as InternApplicationConfirmation,
+      employee_id: employee.id, // Assuming you have a relationship defined
+      intern_application_id: dbUpdatedApplication.id, // Assuming you have a relationship defined
     });
 
     return {
@@ -148,26 +181,28 @@ export class InternApplicationService {
     employee: Employee,
     applicationId: string,
   ): Promise<dto.DeleteApplicationInternResponse> {
-    // eslint-disable-next-line max-len
-    this.logger.info(`Employee with username: ${employee.username}, id: ${employee.id} access DELETE /api/applications/intern/:applicationId`);
+    this.logger.info(
+      // eslint-disable-next-line max-len
+      `Employee with username: ${employee.username}, id: ${employee.id} accessed DELETE /api/applications/intern/:applicationId`,
+    );
 
-    const internApplication = await this.checkIsInternApplicationExist(applicationId);
+    const internApplication =
+      await this.checkIsInternApplicationExist(applicationId);
 
-    const dbUpdatedApplication = await this.prismaService.internApplication.update({
-      where: { id: internApplication.id },
-      data: { is_deleted: true },
-    });
+    // Update the intern application status to deleted
+    internApplication.is_deleted = true;
+    const dbUpdatedApplication =
+      await this.internApplicationRepository.save(internApplication);
 
-    await this.prismaService.confirmedInternApplicationHistory.create({
-      data: {
-        status: 'DELETED',
-        employee_id: employee.id,
-        intern_application_id: dbUpdatedApplication.id,
-      },
+    // Create history record
+    await this.confirmedInternApplicationHistoryRepository.save({
+      status: 'DELETED' as InternApplicationConfirmation,
+      employee_id: employee.id, // Assuming you have a relation set up
+      intern_application_id: dbUpdatedApplication.id,
     });
 
     return {
-      applicationId: internApplication.id,
+      applicationId: dbUpdatedApplication.id,
     };
   }
 }
