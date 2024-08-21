@@ -44,6 +44,8 @@ describe('AuthController (e2e)', () => {
 
       logger.info(response);
 
+      console.log(response.body);
+
       expect(response.status).toBe(401);
       expect(response.headers['set-cookie']).toBeUndefined();
       expect(response.body.success).toBe(false);
@@ -61,11 +63,17 @@ describe('AuthController (e2e)', () => {
 
       logger.info(response);
 
+      console.log(response.body);
+
       expect(response.status).toBe(200);
-      const setCookieHeader = response.headers['set-cookie'] as unknown as string[];
+      const setCookieHeader = response.headers[
+        'set-cookie'
+      ] as unknown as string[];
       const cookieNames = ['itscookiename'];
-      cookieNames.forEach(cookieName => {
-        const found = setCookieHeader.some(cookie => cookie.startsWith(`${cookieName}=`));
+      cookieNames.forEach((cookieName) => {
+        const found = setCookieHeader.some((cookie) =>
+          cookie.startsWith(`${cookieName}=`),
+        );
         expect(found).toBeTruthy();
       });
       expect(response.body.success).toBe(true);

@@ -1,114 +1,147 @@
 import { Injectable } from '@nestjs/common';
-import { ConfirmedInternApplicationHistory, Employee, InternApplication } from '@prisma/client';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
+import { Employee, EmployeeRole } from '../database/entities//employee.entity';
+import {
+  ConfirmedInternApplicationHistory,
+} from '../database/entities/confirmed-intern-application-history.entity';
+import {
+  InternApplication,
+  InternApplicationStatus,
+} from '../database/entities/intern-application.entity';
 import { BcryptService } from '../src/common/bcrypt.service';
-import { PrismaService } from '../src/common/prisma.service';
 
 @Injectable()
 export class E2EService {
   constructor(
-    private prismaService: PrismaService,
+    @InjectRepository(Employee)
+    private employeeRepository: Repository<Employee>,
+    @InjectRepository(InternApplication)
+    private internApplicationRepository: Repository<InternApplication>,
+    @InjectRepository(ConfirmedInternApplicationHistory)
+    private confirmedInternApplicationHistoryRepository: Repository<
+      ConfirmedInternApplicationHistory
+    >,
     private bcyptService: BcryptService,
   ) { }
 
   async createEmployeeWithRoleEmployee() {
-    await this.prismaService.employee.create({
-      data: {
-        name: 'Employee',
-        password: await this.bcyptService.hash('password'),
-        username: 'employee',
-        role: 'EMPLOYEE',
-      },
+    const newEmployee = this.employeeRepository.create({
+      name: 'Employee',
+      password: await this.bcyptService.hash('password'),
+      username: 'employee',
+      role: EmployeeRole.EMPLOYEE,
     });
+
+    const savedEmployee = await this.employeeRepository.save(newEmployee);
+    return savedEmployee;
   }
 
   async createEmployeeWithRoleRecruiter() {
-    await this.prismaService.employee.create({
-      data: {
-        name: 'Recruiter',
-        password: await this.bcyptService.hash('password'),
-        username: 'recruiter',
-        role: 'RECRUITER',
-      },
+    const newEmployee = this.employeeRepository.create({
+      name: 'Recruiter',
+      password: await this.bcyptService.hash('password'),
+      username: 'recruiter',
+      role: EmployeeRole.RECRUITER,
     });
+
+    const savedEmployee = await this.employeeRepository.save(newEmployee);
+
+    return savedEmployee;
   }
 
   async deleteAllEmployee() {
-    await this.prismaService.employee.deleteMany({});
+    await this.employeeRepository.delete({});
   }
 
   async createInterApplicationFirmansyah() {
-    await this.prismaService.internApplication.create({
-      data: {
-        choosen_field: 'Backend Engineer',
-        date_of_birth: new Date('2001-04-25'),
-        intern_duration: 3,
-        name: 'Adi Muhamad Firmansyah',
-        university: 'STMIK DCI',
-      },
+    const newInternApplication = this.internApplicationRepository.create({
+      choosen_field: 'Backend Engineer',
+      date_of_birth: new Date('2001-04-25'),
+      intern_duration: 3,
+      name: 'Adi Muhamad Firmansyah',
+      university: 'STMIK DCI',
     });
+
+    const savedInternApplication =
+      await this.internApplicationRepository.save(newInternApplication);
+
+    return savedInternApplication;
   }
 
   async createInterApplicationHidayah() {
-    await this.prismaService.internApplication.create({
-      data: {
-        choosen_field: 'Backend Engineer',
-        date_of_birth: new Date('2001-04-25'),
-        intern_duration: 3,
-        name: 'Adi Hidayah Apriliansyah',
-        university: 'STMIK DCI',
-      },
+    const newInternApplication = this.internApplicationRepository.create({
+      choosen_field: 'Backend Engineer',
+      date_of_birth: new Date('2001-04-25'),
+      intern_duration: 3,
+      name: 'Adi Hidayah Apriliansyah',
+      university: 'STMIK DCI',
     });
+
+    const savedInternApplication =
+      await this.internApplicationRepository.save(newInternApplication);
+
+    return savedInternApplication;
   }
 
   async createAcceptedInterApplicationHidayah(): Promise<InternApplication> {
-    return await this.prismaService.internApplication.create({
-      data: {
-        choosen_field: 'Backend Engineer',
-        date_of_birth: new Date('2001-04-25'),
-        intern_duration: 3,
-        name: 'Adi Hidayah Apriliansyah',
-        university: 'STMIK DCI',
-        status: 'ACCEPTED',
-      },
+    return await this.internApplicationRepository.save({
+      choosen_field: 'Backend Engineer',
+      date_of_birth: new Date('2001-04-25'),
+      intern_duration: 3,
+      name: 'Adi Hidayah Apriliansyah',
+      university: 'STMIK DCI',
+      status: InternApplicationStatus.ACCEPTED,
     });
   }
 
   async deleteAllInternApplication() {
-    await this.prismaService.internApplication.deleteMany({});
+    await this.internApplicationRepository.delete({});
   }
 
   async getEmployeeWithRoleEmployee(): Promise<Employee> {
-    return await this.prismaService.employee.findFirst({
-      where: { role: 'EMPLOYEE' },
+    return await this.employeeRepository.findOne({
+      where: { role: EmployeeRole.EMPLOYEE },
     });
   }
 
   async getEmployeeWithRoleRecruiter(): Promise<Employee> {
-    return await this.prismaService.employee.findFirst({
-      where: { role: 'RECRUITER' },
-    });
-  }
-
-  async getInternApplication(): Promise<InternApplication> {
-    return await this.prismaService.internApplication.findFirst({
+    return await this.employeeRepository.findOne({
       where: {
-        is_deleted: false,
+        role: EmployeeRole.RECRUITER,
       },
     });
   }
 
-  async getAcceptedInternApplication(): Promise<InternApplication> {
-    return await this.prismaService.internApplication.findFirst({
-      where: { status: 'ACCEPTED', is_deleted: false },
-    });
+  async getInternApplication(): Promise<InternApplication> {
+    try {
+      const internApplication = await this.internApplicationRepository.findOne({
+        where: {
+          is_deleted: false,
+        },
+      });
+      return internApplication;
+    } catch (error) {
+      return null;
+    }
   }
 
-  async getInternApplicationById(id: string): Promise<InternApplication | null> {
+  // async getAcceptedInternApplication(): Promise<InternApplication> {
+  //   return await this.prismaService.internApplication.findFirst({
+  //     where: { status: 'ACCEPTED', is_deleted: false },
+  //   });
+  // }
+
+  async getInternApplicationById(
+    id: string,
+  ): Promise<InternApplication | null> {
     try {
-      const dbInternApplication = await this.prismaService.internApplication.findUnique({
-        where: { id, is_deleted: false },
-      });
+      const dbInternApplication =
+        await this.internApplicationRepository.findOneBy({
+          id,
+          is_deleted: false, // Assuming `is_deleted` is a column in your entity
+        });
       return dbInternApplication;
     } catch (error) {
       return null;
@@ -116,10 +149,19 @@ export class E2EService {
   }
 
   async getConfirmationInternApplicationHistory(): Promise<ConfirmedInternApplicationHistory> {
-    return await this.prismaService.confirmedInternApplicationHistory.findFirst();
+    try {
+      // Using `find` with `take` to get the first record
+      const confirmationHistory =
+        await this.confirmedInternApplicationHistoryRepository.find({
+          take: 1, // Limits the result to one entry
+        });
+      return confirmationHistory[0] || null;
+    } catch (error) {
+      return null;
+    }
   }
 
   async deleteAllConfirmationInternApplicationHistory() {
-    return await this.prismaService.confirmedInternApplicationHistory.deleteMany();
+    return await this.confirmedInternApplicationHistoryRepository.delete({});
   }
 }

@@ -7,6 +7,7 @@ import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 
 import { dataSourceOptions } from '../../database/data-source';
+import { Employee } from '../../database/entities/employee.entity';
 import { CommonModule } from '../common/common.module';
 import cookieConfig from '../config/cookie.config';
 import domainUrlConfig from '../config/domain-url.config';
@@ -41,6 +42,7 @@ import { InternApplicationModule } from './modules/intern-application/intern-app
       transports: [new winston.transports.Console()],
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
+    TypeOrmModule.forFeature([Employee]),
     CommonModule,
     AuthModule,
     InternApplicationModule,
