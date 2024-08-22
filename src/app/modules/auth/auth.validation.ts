@@ -1,6 +1,11 @@
-import { z } from 'zod';
+import { IsString, Length } from 'class-validator';
 
-export const employeeSignInRequestSchema = z.object({
-  username: z.string().min(1).max(30),
-  password: z.string().min(6).max(255),
-});
+export class EmployeeSignInRequest {
+  @IsString()
+  @Length(1, 30)
+  username: string;
+
+  @IsString()
+  @Length(6, 255)
+  password: string;
+}

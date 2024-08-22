@@ -8,7 +8,7 @@ import Unauthenticated from '../../../core/exceptions/unauthenticated';
 import { Employee } from '../../../database/entities/employee.entity';
 import { EmployeeRepository } from '../../../database/repositories/employee.repository';
 import * as dto from './auth.dto';
-import { employeeSignInRequestSchema } from './auth.validation';
+import { EmployeeSignInRequest } from './auth.validation';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +31,7 @@ export class AuthService {
     this.logger.info('User access /api/auth with request body data: ', data);
 
     try {
-      this.validationService.validate(employeeSignInRequestSchema, data);
+      this.validationService.validate(EmployeeSignInRequest, data);
     } catch (error) {
       this.handleUnauthenticatedAttempt(data);
     }
