@@ -23,8 +23,8 @@ import {
 } from '../../../database/repositories/intern-application.repository';
 import * as dto from './intern-application.dto';
 import {
-  confirmApplicationInternRequestBodySchema,
-  getApplicationsInternRequestQuerySchema,
+  ConfirmApplicationInternRequestBodyDto,
+  GetApplicationsInternRequestQueryDto,
 } from './intern-application.validation';
 
 @Injectable()
@@ -61,8 +61,8 @@ export class InternApplicationService {
       `Employee with username: ${employee.username}, id: ${employee.id} access GET /api/applications/intern`,
     );
 
-    const query = this.validationService.validate(
-      getApplicationsInternRequestQuerySchema,
+    const query = await this.validationService.validate(
+      GetApplicationsInternRequestQueryDto,
       { name, limit, page },
     );
 
@@ -123,8 +123,8 @@ export class InternApplicationService {
     const dbInternApplication =
       await this.checkIsInternApplicationExist(applicationId);
 
-    const bodyReq = this.validationService.validate(
-      confirmApplicationInternRequestBodySchema,
+    const bodyReq = await this.validationService.validate(
+      ConfirmApplicationInternRequestBodyDto,
       body,
     );
 
@@ -136,7 +136,7 @@ export class InternApplicationService {
       );
     }
 
-    const dbUpdatedInternApplication = await this.internApplicationRepository.update({
+    await this.internApplicationRepository.update({
       where: { id: applicationId },
       data: { status: body.status as InternApplicationStatus },
     });
@@ -151,7 +151,7 @@ export class InternApplicationService {
     return {
       applicationId,
       name: dbInternApplication.name,
-      status: dbUpdatedInternApplication.status,
+      status: bodyReq.status,
     };
   }
 

@@ -1,11 +1,22 @@
-import { z } from 'zod';
+import { IsEnum, IsOptional, IsPositive, IsString } from 'class-validator';
 
-export const getApplicationsInternRequestQuerySchema = z.object({
-  name: z.string().optional(),
-  limit: z.number().positive().optional(),
-  page: z.number().positive().optional(),
-});
+import { InternApplicationStatus } from '../../../database/entities/intern-application.entity';
 
-export const confirmApplicationInternRequestBodySchema = z.object({
-  status: z.enum(['ACCEPTED', 'REJECTED']),
-});
+export class GetApplicationsInternRequestQueryDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsPositive()
+  limit?: number;
+
+  @IsOptional()
+  @IsPositive()
+  page?: number;
+}
+
+export class ConfirmApplicationInternRequestBodyDto {
+  @IsEnum(InternApplicationStatus)
+  status: 'ACCEPTED' | 'REJECTED';
+}
