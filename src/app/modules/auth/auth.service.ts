@@ -1,21 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Repository } from 'typeorm';
 import { Logger } from 'winston';
 
 import { BcryptService } from '../../../common/bcrypt.service';
 import { ValidationService } from '../../../common/validation.service';
 import Unauthenticated from '../../../core/exceptions/unauthenticated';
 import { Employee } from '../../../database/entities/employee.entity';
+import { EmployeeRepository } from '../../../database/repositories/employee.repository';
 import * as dto from './auth.dto';
 import { employeeSignInRequestSchema } from './auth.validation';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(Employee)
-    private employeeRepository: Repository<Employee>,
+    private employeeRepository: EmployeeRepository,
     private validationService: ValidationService,
     private bcryptService: BcryptService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
@@ -38,9 +36,7 @@ export class AuthService {
       this.handleUnauthenticatedAttempt(data);
     }
 
-    const dbEmployee = await this.employeeRepository.findOne({
-      where: { username: data.username },
-    });
+    const dbEmployee = await this.employeeRepository.findByUsername(data.username);
 
     if (!dbEmployee) {
       this.handleUnauthenticatedAttempt(data);
