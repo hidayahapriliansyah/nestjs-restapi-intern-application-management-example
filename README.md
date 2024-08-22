@@ -4,7 +4,7 @@
 - [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/docs/)
 - [![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://docs.nestjs.com/)
 - [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/docs/)
-- [![Prisma ORM](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white)](https://www.prisma.io/docs/)
+- [![TypeORM](https://img.shields.io/badge/TypeORM-FF5A00?style=flat-square&logo=typeorm&logoColor=white)](https://typeorm.io/)
 - [![Zod](https://img.shields.io/badge/Zod-3C873A?style=flat-square&logo=java&logoColor=white)](https://zod.dev/)
 - [![jsonwebtoken](https://img.shields.io/badge/JsonWebToken-000000?style=flat-square&logo=json-web-tokens&logoColor=white)](https://www.npmjs.com/package/jsonwebtoken)
 
@@ -37,16 +37,21 @@ All of the API specifications for this project are written in the `docs` folder 
 
 **The project is using Node.js version 20.11.1**
 
-Please pay attention to .env.example file and make your own .env file base on your local environment.
+Please pay attention to the `.env.example` file and make your own `.env` file based on your local environment. And make a database named `intern_management`.
 
 ### Install the dependencies
 ```bash
 $ npm install
 ```
 
-### Excecute Prisma migration
+### Make TypeORM migration
 ```bash
-$ npx prisma migrate dev --name init
+$ npm run migration:generate --name=initialization
+```
+
+### Execute TypeORM migration
+```bash
+$ npm run migration:run
 ```
 
 ### Running end-to-end testing
