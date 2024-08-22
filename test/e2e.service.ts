@@ -127,12 +127,6 @@ export class E2EService {
     }
   }
 
-  // async getAcceptedInternApplication(): Promise<InternApplication> {
-  //   return await this.prismaService.internApplication.findFirst({
-  //     where: { status: 'ACCEPTED', is_deleted: false },
-  //   });
-  // }
-
   async getInternApplicationById(
     id: string,
   ): Promise<InternApplication | null> {

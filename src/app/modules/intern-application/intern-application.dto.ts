@@ -1,6 +1,6 @@
-import { InternApplication } from '@prisma/client';
 import { z } from 'zod';
 
+import { InternApplication } from '../../../database/entities/intern-application.entity';
 import { confirmApplicationInternRequestBodySchema } from './intern-application.validation';
 
 export type GetApplicationInternDetailByIdResponse = {
