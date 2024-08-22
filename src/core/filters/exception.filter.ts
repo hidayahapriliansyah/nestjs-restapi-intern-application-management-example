@@ -5,7 +5,6 @@ import {
   ExceptionFilter,
   HttpStatus,
 } from '@nestjs/common';
-import { ZodError } from 'zod';
 
 import ParentCustomAPIError from '../exceptions/parent-cusom-api-error';
 import { ErrorAPIResponse } from '../models/web.model';
@@ -19,13 +18,6 @@ export class ErrorFilter implements ExceptionFilter {
     if (exception instanceof ParentCustomAPIError) {
       response
         .status(exception.statusCode)
-        .json(
-          new ErrorAPIResponse(exception.message, exception.errors)
-        );
-      return;
-    } else if (exception instanceof ZodError) {
-      response
-        .status(HttpStatus.BAD_REQUEST)
         .json(
           new ErrorAPIResponse(exception.message, exception.errors)
         );
