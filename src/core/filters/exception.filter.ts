@@ -30,6 +30,13 @@ export class ErrorFilter implements ExceptionFilter {
           new ErrorAPIResponse(exception.message, exception.errors)
         );
       return;
+    } else if (exception.message.includes('Validation failed:')) {
+      response
+        .status(HttpStatus.BAD_REQUEST)
+        .json(
+          new ErrorAPIResponse(exception.message, 'Validation Error')
+        );
+      return;
     } else if (exception instanceof BadRequestException) {
       response
         .status(HttpStatus.BAD_REQUEST)
