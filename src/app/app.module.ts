@@ -6,14 +6,14 @@ import * as cookieParser from 'cookie-parser';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 
-import { dataSourceOptions } from '../../database/data-source';
-import { Employee } from '../../database/entities/employee.entity';
 import { CommonModule } from '../common/common.module';
 import cookieConfig from '../config/cookie.config';
 import domainUrlConfig from '../config/domain-url.config';
 import jwtConfig from '../config/jwt.config';
 import { ErrorFilter } from '../core/filters/exception.filter';
 import { EmployeeAuthMiddleware } from '../core/middlewares/employee.auth.middleware';
+import { dataSourceOptions } from '../database/data-source';
+import { Employee } from '../database/entities/employee.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import {
   InternApplicationController,

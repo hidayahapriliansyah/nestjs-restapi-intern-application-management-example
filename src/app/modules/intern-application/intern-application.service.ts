@@ -4,18 +4,18 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Repository } from 'typeorm';
 import { Logger } from 'winston';
 
-import {
-  ConfirmedInternApplicationHistory,
-  InternApplicationConfirmation,
-} from '../../../../database/entities/confirmed-intern-application-history.entity';
-import { Employee } from '../../../../database/entities/employee.entity';
-import {
-  InternApplication,
-  InternApplicationStatus,
-} from '../../../../database/entities/intern-application.entity';
 import { ValidationService } from '../../../common/validation.service';
 import BadRequest from '../../../core/exceptions/bad-request';
 import NotFound from '../../../core/exceptions/not-found';
+import {
+  ConfirmedInternApplicationHistory,
+  InternApplicationConfirmation,
+} from '../../../database/entities/confirmed-intern-application-history.entity';
+import { Employee } from '../../../database/entities/employee.entity';
+import {
+  InternApplication,
+  InternApplicationStatus,
+} from '../../../database/entities/intern-application.entity';
 import * as dto from './intern-application.dto';
 import {
   confirmApplicationInternRequestBodySchema,

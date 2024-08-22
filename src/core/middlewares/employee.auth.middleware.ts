@@ -4,10 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { NextFunction, Request, Response } from 'express';
 import { Repository } from 'typeorm';
 
-import { Employee } from '../../../database/entities/employee.entity';
 import { JwtService } from '../../common/jwt.service';
 import cookieConfig from '../../config/cookie.config';
 import jwtConfig from '../../config/jwt.config';
+import { Employee } from '../../database/entities/employee.entity';
 import Unauthenticated from '../exceptions/unauthenticated';
 import { PayloadDataEmployeeAccessToken } from '../types/payload.type';
 

@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import { Employee } from '../../../database/entities/employee.entity';
+import { Employee } from '../../database/entities/employee.entity';
 import Unauthorized from '../exceptions/unauthorized';
 
 @Injectable()

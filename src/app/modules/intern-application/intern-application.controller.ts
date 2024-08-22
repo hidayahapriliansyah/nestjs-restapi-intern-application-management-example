@@ -9,11 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { Employee } from '../../../../database/entities/employee.entity';
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { RecruiterGuard } from '../../../core/guards/recruiter.role.guard';
 import { SuccessAPIResponse } from '../../../core/models/web.model';
 import { OptionalParseIntPipe } from '../../../core/pipes/optional-parse-int.pipe';
+import { Employee } from '../../../database/entities/employee.entity';
 import * as dto from './intern-application.dto';
 import { InternApplicationService } from './intern-application.service';
 

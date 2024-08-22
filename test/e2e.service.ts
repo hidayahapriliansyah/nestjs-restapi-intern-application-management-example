@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Employee, EmployeeRole } from '../database/entities//employee.entity';
+import { BcryptService } from '../src/common/bcrypt.service';
 import {
   ConfirmedInternApplicationHistory,
-} from '../database/entities/confirmed-intern-application-history.entity';
+} from '../src/database/entities/confirmed-intern-application-history.entity';
+import { Employee, EmployeeRole } from '../src/database/entities/employee.entity';
 import {
   InternApplication,
   InternApplicationStatus,
-} from '../database/entities/intern-application.entity';
-import { BcryptService } from '../src/common/bcrypt.service';
+} from '../src/database/entities/intern-application.entity';
 
 @Injectable()
 export class E2EService {

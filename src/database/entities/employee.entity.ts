@@ -23,6 +23,9 @@ export class Employee {
   name: string;
 
   @Column({ type: 'varchar', length: 100 })
+  nick_name: string;
+
+  @Column({ type: 'varchar', length: 100 })
   username: string;
 
   @Column({ type: 'varchar', length: 255 })

@@ -4,10 +4,10 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Repository } from 'typeorm';
 import { Logger } from 'winston';
 
-import { Employee } from '../../../../database/entities/employee.entity';
 import { BcryptService } from '../../../common/bcrypt.service';
 import { ValidationService } from '../../../common/validation.service';
 import Unauthenticated from '../../../core/exceptions/unauthenticated';
+import { Employee } from '../../../database/entities/employee.entity';
 import * as dto from './auth.dto';
 import { employeeSignInRequestSchema } from './auth.validation';
 

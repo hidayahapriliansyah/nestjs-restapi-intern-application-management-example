@@ -3,9 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
   ConfirmedInternApplicationHistory,
-} from '../database/entities/confirmed-intern-application-history.entity';
-import { Employee } from '../database/entities/employee.entity';
-import { InternApplication } from '../database/entities/intern-application.entity';
+} from '../src/database/entities/confirmed-intern-application-history.entity';
+import { Employee } from '../src/database/entities/employee.entity';
+import { InternApplication } from '../src/database/entities/intern-application.entity';
 import { E2EService } from './e2e.service';
 
 @Module({
