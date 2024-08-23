@@ -15,6 +15,7 @@ import { EmployeeAuthMiddleware } from '../core/middlewares/employee.auth.middle
 import { dataSourceOptions } from '../database/data-source';
 import { Employee } from '../database/entities/employee.entity';
 import { AuthModule } from './modules/auth/auth.module';
+import { EmployeeModule } from './modules/employee/employee.module';
 import {
   InternApplicationController,
 } from './modules/intern-application/intern-application.controller';
@@ -46,6 +47,7 @@ import { InternApplicationModule } from './modules/intern-application/intern-app
     CommonModule,
     AuthModule,
     InternApplicationModule,
+    EmployeeModule,
   ],
   providers: [
     {
