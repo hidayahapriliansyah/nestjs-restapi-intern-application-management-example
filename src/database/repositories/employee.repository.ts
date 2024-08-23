@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 
 import { Employee } from '../entities/employee.entity';
 
@@ -13,5 +13,9 @@ export class EmployeeRepository {
 
   async findByUsername(username: string): Promise<Employee | null> {
     return this.repository.findOne({ where: { username } });
+  }
+
+  async create(data: DeepPartial<Employee>) {
+    return await this.repository.save(data);
   }
 }
