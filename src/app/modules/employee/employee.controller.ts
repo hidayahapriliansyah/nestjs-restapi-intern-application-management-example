@@ -11,9 +11,9 @@ export class EmployeeController {
   ) { }
 
   @Post()
-  async createEmployee(
-    @Body() data: dto.CreateEmployeeRequest,
-  ): Promise<SuccessAPIResponse<dto.CreateEmployeeResponse>> {
+  async create(
+    @Body() data: dto.EmployeeCreateRequest,
+  ): Promise<SuccessAPIResponse<dto.EmployeeCreateResponse>> {
     const result = await this.employeeService.createEmployee(data);
 
     return new SuccessAPIResponse('Success to create employee.', result);
