@@ -1,9 +1,10 @@
+import { EmployeeRole } from '../../../database/entities/employee.entity';
 import { CreateEmployeeRequestSchema } from './employee.validation';
 
-export type CreateEmployeeResponse = {
+export type EmployeeCreateResponse = {
   employeeId: string;
   name: string;
-  role: 'EMPLOYEE' | 'RECRUITER';
+  role: EmployeeRole;
 };
 
-export type CreateEmployeeRequest = CreateEmployeeRequestSchema;
+export type EmployeeCreateRequest = CreateEmployeeRequestSchema;
