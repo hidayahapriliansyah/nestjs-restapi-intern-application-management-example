@@ -16,8 +16,8 @@ export class EmployeeService {
   ) { }
 
   async createEmployee(
-    data: dto.CreateEmployeeRequest
-  ): Promise<dto.CreateEmployeeResponse> {
+    data: dto.EmployeeCreateRequest
+  ): Promise<dto.EmployeeCreateResponse> {
     const bodyReq = await this.validationService.validate(CreateEmployeeRequestSchema, data);
 
     const dbEmployee = await this.employeeRepository.findByUsername(bodyReq.username);
