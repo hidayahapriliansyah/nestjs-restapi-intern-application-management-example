@@ -11,6 +11,10 @@ export class EmployeeRepository {
     private readonly repository: Repository<Employee>,
   ) { }
 
+  async findAll(query): Promise<[Employee[], number]> {
+    return this.repository.findAndCount(query);
+  }
+
   async findByUsername(username: string): Promise<Employee | null> {
     return this.repository.findOne({ where: { username } });
   }

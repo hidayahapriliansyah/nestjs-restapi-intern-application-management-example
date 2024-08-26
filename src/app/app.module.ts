@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as cookieParser from 'cookie-parser';
 import { WinstonModule } from 'nest-winston';
@@ -14,12 +15,14 @@ import { ErrorFilter } from '../core/filters/exception.filter';
 import { EmployeeAuthMiddleware } from '../core/middlewares/employee.auth.middleware';
 import { dataSourceOptions } from '../database/data-source';
 import { Employee } from '../database/entities/employee.entity';
+import { JobSchedulerModule } from '../jobs/scheduler/job-scheduler.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EmployeeModule } from './modules/employee/employee.module';
 import {
   InternApplicationController,
 } from './modules/intern-application/intern-application.controller';
 import { InternApplicationModule } from './modules/intern-application/intern-application.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -44,10 +47,13 @@ import { InternApplicationModule } from './modules/intern-application/intern-app
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     TypeOrmModule.forFeature([Employee]),
+    ScheduleModule.forRoot(),
     CommonModule,
     AuthModule,
     InternApplicationModule,
     EmployeeModule,
+    NotificationModule,
+    JobSchedulerModule,
   ],
   providers: [
     {
