@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
-import { EmployeeRepository } from '../../../database/repositories/employee.repository';
+import { EmployeeRole } from '../../database/entities/employee.entity';
+import { InternApplicationStatus } from '../../database/entities/intern-application.entity';
+import { EmployeeRepository } from '../../database/repositories/employee.repository';
 import {
   EmployeeNotificationRepository,
-} from '../../../database/repositories/employee-notification.repository';
+} from '../../database/repositories/employee-notification.repository';
 import {
   InternApplicationRepository,
-} from '../../../database/repositories/intern-application.repository';
+} from '../../database/repositories/intern-application.repository';
 
 @Injectable()
-export class NotificationService {
+export class NotificationScheduler {
   constructor(
     private employeeNotificationRepository: EmployeeNotificationRepository,
     private internApplicationRepository: InternApplicationRepository,
@@ -20,13 +22,12 @@ export class NotificationService {
   @Cron('0 0 * * *') // Setiap hari pada jam 00:00 (tengah malam)
   async sendNotificationForPendingApplications() {
     const pendingApplications = await this.internApplicationRepository.findAll({
-      where: { status: 'NEED_CONFIRMATION' },
+      where: { status: InternApplicationStatus.NEED_CONFIRMATION },
     });
 
     if (pendingApplications.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [employees, totalEmployees] = await this.employeeRepository.findAll({
-        where: { role: 'RECRUITER' },
+      const [employees] = await this.employeeRepository.findAll({
+        where: { role: EmployeeRole.RECRUITER },
       });
 
       for (const employee of employees) {

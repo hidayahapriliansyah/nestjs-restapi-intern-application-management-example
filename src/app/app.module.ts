@@ -15,13 +15,13 @@ import { ErrorFilter } from '../core/filters/exception.filter';
 import { EmployeeAuthMiddleware } from '../core/middlewares/employee.auth.middleware';
 import { dataSourceOptions } from '../database/data-source';
 import { Employee } from '../database/entities/employee.entity';
+import { JobSchedulerModule } from '../jobs/scheduler/job-scheduler.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EmployeeModule } from './modules/employee/employee.module';
 import {
   InternApplicationController,
 } from './modules/intern-application/intern-application.controller';
 import { InternApplicationModule } from './modules/intern-application/intern-application.module';
-import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -51,7 +51,7 @@ import { NotificationModule } from './modules/notification/notification.module';
     AuthModule,
     InternApplicationModule,
     EmployeeModule,
-    NotificationModule,
+    JobSchedulerModule,
   ],
   providers: [
     {
