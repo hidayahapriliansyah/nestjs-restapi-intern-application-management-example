@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 
 import { ConfirmedInternApplicationHistory } from './confirmed-intern-application-history.entity';
+import { EmployeeNotification } from './employee-notification.entity';
 
 export enum EmployeeRole {
   EMPLOYEE = 'EMPLOYEE',
@@ -36,4 +37,10 @@ export class Employee {
     (history) => history.employee,
   )
   confirmedInternApplicationHistory: ConfirmedInternApplicationHistory[];
+
+  @OneToMany(
+    () => EmployeeNotification,
+    (notification) => notification.employee,
+  )
+  notification: EmployeeNotification[];
 }
