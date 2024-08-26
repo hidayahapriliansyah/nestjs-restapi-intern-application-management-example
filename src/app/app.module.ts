@@ -22,6 +22,7 @@ import {
   InternApplicationController,
 } from './modules/intern-application/intern-application.controller';
 import { InternApplicationModule } from './modules/intern-application/intern-application.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { InternApplicationModule } from './modules/intern-application/intern-app
     AuthModule,
     InternApplicationModule,
     EmployeeModule,
+    NotificationModule,
     JobSchedulerModule,
   ],
   providers: [
