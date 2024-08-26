@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as cookieParser from 'cookie-parser';
 import { WinstonModule } from 'nest-winston';
@@ -20,6 +21,7 @@ import {
   InternApplicationController,
 } from './modules/intern-application/intern-application.controller';
 import { InternApplicationModule } from './modules/intern-application/intern-application.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -44,10 +46,12 @@ import { InternApplicationModule } from './modules/intern-application/intern-app
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     TypeOrmModule.forFeature([Employee]),
+    ScheduleModule.forRoot(),
     CommonModule,
     AuthModule,
     InternApplicationModule,
     EmployeeModule,
+    NotificationModule,
   ],
   providers: [
     {
